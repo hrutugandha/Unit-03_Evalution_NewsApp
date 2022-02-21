@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+      #container {
+          height: 700px;
+          display: flex;
+          border: 1px solid black;
+      }
+      body{
+        margin: 0;
+        text-align: center;
+
+      }
+      #sidebar{
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        height: 50%;
+        text-align: center;
+      }
+      #sidebar > div{
+        flex: 1;
+      }
+      #main{
+        flex: 8;
+        border: 1px solid red;
+      }
+      #news{
+        display: flex;
+        margin: 20px;
+      padding: 30px;
+      }
+      #news > div {
+        flex: 2;
+        border: 1px solid black;
+      }
+      #imgDiv > img {
+        width: 400px;
+        height: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="sidebar">
+          <div><h1>News</h1></div>
+          <div>Login</div>
+          <div>Search <input type="text" id="searchbar"></div>
+          <div>Startups</div>
+          <div>Newsteller</div>
+          <div>Video</div>
+        <!--DO NOT CHANGE THIS ID's-->
+        <!--Append the horizontal navbar(sidebar) here only-->
+      </div>
+
+      <div id="main">
+        <!--DO NOT CHANGE THIS ID's-->
+        <!--Append top headlines from india here only-->
+      </div>
+    </div>
+  </body>
+</html>
+<script type="module">
+
+let url = `https://shrouded-earth-23381.herokuapp.com/api/headlines/india`;
+let main = document.getElementById('main');
+
+async function apiCall(url) {
+
+
+    //add api call logic here
+
+    try{
+        let res = await fetch(url);
+        let articles = await res.json();
+
+        appendArticles(articles, main)
+        return articles;
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+apiCall(url)
+function appendArticles(articles, main) {
+
+    //add append logic here
+    articles.forEach(element => {
+
+      let div = document.createElement("div");
+      div.id = "news";
+      div.onclick = () => {
+        localStorage.setItem("article", JSON.stringify(element));
+        window.location.href = "news.html"
+      }
+
+      let title = document.createElement("div");
+      title.innerHTML = element.title;
+      title.id = "title";
+
+      let content = document.createElement("div");
+      content.innerHTML = element.content; 
+
+      let imgDiv = document.createElement("div");
+      imgDiv.id = "imgDiv"
+      let img = document.createElement("img");
+      img.src = element.urlToImage;
+
+      imgDiv.append(img);
+
+      div.append(title,content,imgDiv);
+      main.append(div);
+
+    });
+
+}
+
+let input = document.getElementById("searchbar");
+
+input.addEventListener("keypress", function(key) {
+
+  if(key.code === "Enter"){
+    let input_term = document.getElementById("searchbar").value;
+
+    if(input_term == "cricket"){
+    localStorage.setItem("search_term",input_term);
+    window.location.href = "search.html";}
+  }
+})
+
+
+</script>
